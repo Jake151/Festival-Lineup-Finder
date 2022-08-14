@@ -18,7 +18,7 @@ Usage: python -m lineupfinder [OPTIONS]
 
 Options:
   -u, --user TEXT               User to analyse.  [required]
-  -f, --file TEXT               Clashfinder JSON file.  [required]
+  -f, --file PATH               Clashfinder JSON file.  [required]
   -al, --artist-limit INTEGER   Limit of top artists.  [default: 50]
   -sl, --similar-limit INTEGER  Limit of similar artists.  [default: 100]
   --api-key TEXT                Last.fm API key. Can be declared as env var
@@ -26,4 +26,4 @@ Options:
   --api-secret TEXT             Last.fm API secret. Can be declared as env var
                                 LINEUPFINDER_API_SECRET.  [required]
   --help                        Show this message and exit.
-  ```
+```

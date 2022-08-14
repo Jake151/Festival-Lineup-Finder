@@ -7,17 +7,19 @@ import pylast
 
 def get_similar_artists(network, user, artist_limit, similar_limit):
     lastfm_user = network.get_user(user)
-    artists = lastfm_user.get_top_artists(limit=artist_limit)
+    top_artists = [
+        top_artist.item
+        for top_artist in lastfm_user.get_top_artists(limit=artist_limit)
+    ]
 
-    similar_artists = []
-    for artist in artists:
-        # Add the aritsts to the list to include them in the lineup generator.
-        similar_artists.append(artist.item)
-        similar = artist.item.get_similar(limit=similar_limit)
-        for s in similar:
-            similar_artists.append(s.item)
+    similar_artists = [
+        s.item
+        for artist in top_artists
+        for s in artist.get_similar(limit=similar_limit)
+    ]
+    all_artists = [*top_artists, *similar_artists]
 
-    return similar_artists
+    return all_artists
 
 
 def load_clashfinder_bands(file):
@@ -28,30 +30,29 @@ def load_clashfinder_bands(file):
         print("Selected file isn't a valid ClashFinder JSON file.")
         sys.exit(1)
 
-    bands = []
-    for l in clashfinder["locations"]:
-        for event in l["events"]:
-            bands.append(event["name"])
+    bands = [
+        event["name"] for loc in clashfinder["locations"] for event in loc["events"]
+    ]
 
     return bands
 
 
 def generate_lineup(lineup_artists, similar_artists):
-    artists = []
-    for artist in similar_artists:
-        artists.append(artist.name)
-
-    lineup = []
-    for a in sorted(set(artists)):
-        if a in lineup_artists:
-            lineup.append(a)
+    artists = {artist.name for artist in similar_artists}
+    lineup = [artist for artist in artists if artist in lineup_artists]
 
     return lineup
 
 
 @click.command()
 @click.option("-u", "--user", required=True, help="User to analyse.")
-@click.option("-f", "--file", required=True, help="Clashfinder JSON file.")
+@click.option(
+    "-f",
+    "--file",
+    required=True,
+    help="Clashfinder JSON file.",
+    type=click.Path(exists=True),
+)
 @click.option(
     "-al", "--artist-limit", default=50, show_default=True, help="Limit of top artists."
 )
@@ -78,8 +79,7 @@ def run(user, file, artist_limit, similar_limit, api_key, api_secret):
     similar_artists = get_similar_artists(network, user, artist_limit, similar_limit)
 
     print("** Your Bands to See List **")
-    for artist in generate_lineup(festival_lineup, similar_artists):
-        print(artist)
+    print(*generate_lineup(festival_lineup, similar_artists), sep="\n")
 
 
 if __name__ == "__main__":
