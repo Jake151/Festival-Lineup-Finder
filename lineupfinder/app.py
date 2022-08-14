@@ -79,7 +79,7 @@ def run(user, file, artist_limit, similar_limit, api_key, api_secret):
     similar_artists = get_similar_artists(network, user, artist_limit, similar_limit)
 
     print("** Your Bands to See List **")
-    print(*generate_lineup(festival_lineup, similar_artists), sep="\n")
+    print(*sorted(generate_lineup(festival_lineup, similar_artists)), sep="\n")
 
 
 if __name__ == "__main__":
