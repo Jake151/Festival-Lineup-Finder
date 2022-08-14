@@ -62,8 +62,16 @@ def generate_lineup(lineup_artists, similar_artists):
     show_default=True,
     help="Limit of similar artists.",
 )
-@click.option("--api-key", required=True, help="Last.fm API key. Can be declared as env var LINEUPFINDER_API_KEY.")
-@click.option("--api-secret", required=True, help="Last.fm API secret. Can be declared as env var LINEUPFINDER_API_SECRET.")
+@click.option(
+    "--api-key",
+    required=True,
+    help="Last.fm API key. Can be declared as env var LINEUPFINDER_API_KEY.",
+)
+@click.option(
+    "--api-secret",
+    required=True,
+    help="Last.fm API secret. Can be declared as env var LINEUPFINDER_API_SECRET.",
+)
 def run(user, file, artist_limit, similar_limit, api_key, api_secret):
     festival_lineup = load_clashfinder_bands(file)
     network = pylast.LastFMNetwork(api_key=api_key, api_secret=api_secret)
