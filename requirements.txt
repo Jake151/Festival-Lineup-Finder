@@ -1,2 +1,2 @@
-pylast
-click
+pylast==5.0.0
+click==8.1.3
